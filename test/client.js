@@ -1,10 +1,20 @@
-var Coinbase = require('../lib/coinbase.js');
+var CoinbaseClient = require(__dirname + '/../lib/client.js');
 
-var client = new Coinbase.Client({
-  api_key: process.env.COINBASE_API_KEY
+var client = new CoinbaseClient({
+  apiKey: process.env.COINBASE_API_KEY,
+  secret: process.env.COINBASE_SECRET_KEY
 });
 
-client.send_money('1PeStttm97H3twHfqpWRmAGAjWRWuYnxQn','0.001', function(err, data){
-  console.log(data);
-  console.log(err);
+describe('Coinbase Node Service', function () {
+
+  it('should make a request to Coinbase and log out the response or error', function () {
+    client.list()
+      .then(function(response) {
+        console.log(response);
+      })
+      .error(function(error) {
+        console.log(error);
+      });
+  });
+
 });
