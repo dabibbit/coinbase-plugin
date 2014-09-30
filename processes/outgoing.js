@@ -1,6 +1,12 @@
 var SqlMqWorker = require('sql-mq-worker');
 var gatewayd = require(__dirname+'/../');
 const Address = gatewayd.models.externalAccounts;
+const CoinbaseClient = require(__dirname+'/../lib/client.js');
+
+var coinbase = new CoinbaseClient({
+  apiKey: gatewayd.config.get('COINBASE_API_KEY'),
+  secret: gatewayd.config.get('COINBASE_SECRET_KEY')
+});
 
 var worker = new SqlMqWorker({
   Class: gatewayd.models.externalTransactions,

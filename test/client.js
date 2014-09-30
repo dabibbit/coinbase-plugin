@@ -8,10 +8,14 @@ const client = new CoinbaseClient({
 
 describe('Coinbase Node Service', function () {
 
-  it('should make a request to Coinbase and log out the response or error', function (done) {
-    client.list()
+  it('should make a request to Coinbase to send money and log the response or error', function (done) {
+    client.sendMoney({
+      transaction: {
+        to: '',
+        amount: ''
+      }
+    })
       .then(function(transactions) {
-        assert(transactions.length > 0);
         console.log(transactions);
         done();
       })
@@ -22,4 +26,30 @@ describe('Coinbase Node Service', function () {
       });
   });
 
+
+  it('should make a request to Coinbase to see transaction details and log the response or error', function (done) {
+    client.show({id: ''})
+      .then(function(transaction) {
+        console.log(transaction);
+        done();
+      })
+      .error(function(error) {
+        console.log('ERROR', error);
+        assert(false);
+        done();
+      });
+  });
+
+  it('should make a request to Coinbase to see all transactions and log the response or error', function (done) {
+    client.list()
+      .then(function(transactions) {
+        console.log(transactions);
+        done();
+      })
+      .error(function(error) {
+        console.log('ERROR', error);
+        assert(false);
+        done();
+      });
+  });
 });
