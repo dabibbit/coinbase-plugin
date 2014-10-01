@@ -1,5 +1,6 @@
 var SqlMqWorker = require('sql-mq-worker');
-var gatewayd = require(__dirname+'/../');
+var gatewayd = require(process.env.GATEWAYD_PATH);
+
 const Address = gatewayd.models.externalAccounts;
 const CoinbaseClient = require(__dirname+'/../lib/client.js');
 
