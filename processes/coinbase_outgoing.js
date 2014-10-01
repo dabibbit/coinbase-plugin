@@ -1,8 +1,8 @@
 var SqlMqWorker = require('sql-mq-worker');
 var gatewayd = require(process.env.GATEWAYD_PATH);
 
-const Address = gatewayd.models.externalAccounts;
-const CoinbaseClient = require(__dirname+'/../lib/client.js');
+const ExternalAccounts = gatewayd.models.externalAccounts;
+const CoinbaseClient = require('coinbase-node');
 
 var coinbase = new CoinbaseClient({
   apiKey: gatewayd.config.get('COINBASE_API_KEY'),
@@ -12,19 +12,21 @@ var coinbase = new CoinbaseClient({
 var worker = new SqlMqWorker({
   Class: gatewayd.models.externalTransactions,
   predicate: { where: {
-    state: 'outgoing'
+    status: 'outgoing'
   }},
   job: function(payment, next) {
 
-    Address.find(payment.external_account_id)
-    .then(function(address) {
-      if (!address) {
-        throw new Error("no address found for payment"); 
+    ExternalAccounts.find(payment.external_account_id)
+    .then(function(account) {
+      if (!account) {
+        throw new Error("no external account found for payment");
       }
       return coinbase.sendMoney({
-        to: address.uid,
-        amount: payment.amount
-      })
+          transaction: {
+            to: account.address,
+            amount: payment.amount
+          }
+        })
     })
     .then(function(coinbasePayment) {
       payment.updateAttributes({
@@ -41,6 +43,5 @@ var worker = new SqlMqWorker({
     })
   }
 });
-
 worker.start();
 

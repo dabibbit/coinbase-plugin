@@ -4,7 +4,6 @@ const QuotesController = require(__dirname+'/lib/controllers/quotes_controller')
 function CoinbasePlugin(options) {
   var router = new express.Router();
 
-
   var quotesController = new QuotesController ({
     gatewayd: options.gatewayd
   });
@@ -19,16 +18,13 @@ function CoinbasePlugin(options) {
       }
     })
   });
-
   router.get('/v1/payments/quotes', quotesController.test.bind(quotesController));
-
 
   this.router = router;
   this.processes = {
-    outgoing : __dirname+'/processes/outgoing'
+    coinbase_outgoing : __dirname+'/processes/coinbase_outgoing.js'
   };
 
-
-};
+}
 
 module.exports = CoinbasePlugin;

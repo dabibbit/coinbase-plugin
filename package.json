@@ -1,19 +1,20 @@
 {
-  "name": "coinbase-node",
-  "description": "Coinbase Bitcoin payment library for Node.js",
+  "name": "gatewayd-coinbase-plugin",
+  "description": "A bridge in and out of Ripple via Coinbase",
   "keywords": [
     "bitcoin",
     "coinbase",
     "api",
     "client"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gatewayd/coinbase-plugin.git"
+  },
   "version": "0.0.5",
   "main": "lib/coinbase.js",
   "dependencies": {
-    "bluebird": "^2.3.4",
-    "crypto": "0.0.3",
-    "require-all": "0.0.8",
-    "superagent": "^0.19.0",
+    "coinbase-node": "^0.1.2",
     "express": "^4.9.5",
     "sql-mq-worker": "^1.0.3"
   },
