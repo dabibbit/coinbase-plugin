@@ -21,25 +21,27 @@ var worker = new SqlMqWorker({
       if (!account) {
         throw new Error("no external account found for payment");
       }
-      return coinbase.sendMoney({
+      coinbase.sendMoney({
           transaction: {
             to: account.address,
-            amount: payment.amount
+            amount_string: payment.amount,
+            amount_currency_iso: payment.currency
           }
         })
-    })
-    .then(function(coinbasePayment) {
-      payment.updateAttributes({
-        status: 'successful',
-        uid: coinbasePayment.id
-      }).then(next)
-    })
-    .error(function(error) {
-      payment.data.error = error;
-      payment.updateAttributes({
-        status: 'failed',
-        data: payment.data
-      }) 
+        .then(function(coinbasePayment) {
+          return payment.updateAttributes({
+            status: 'successful',
+            uid: coinbasePayment.id
+          }).then(next)
+        })
+        .error(function(error) {
+          var data = payment.data || {};
+          data.error = error;
+          payment.updateAttributes({
+            status: 'failed',
+            data: data
+          })
+        })
     })
   }
 });
