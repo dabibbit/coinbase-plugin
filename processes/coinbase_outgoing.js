@@ -28,19 +28,18 @@ var worker = new SqlMqWorker({
             amount_currency_iso: payment.currency
           }
         })
-        .then(function(coinbasePayment) {
-          return payment.updateAttributes({
+        .then(function(coinbaseResponse) {
+          payment.updateAttributes({
             status: 'successful',
-            uid: coinbasePayment.id
+            uid: coinbaseResponse.transaction.id,
+            data: coinbaseResponse
           }).complete(next);
         })
         .error(function(error) {
           console.log('ERROR', error);
-          var data = payment.data || {};
-          data.error = error;
           payment.updateAttributes({
             status: 'failed',
-            data: data
+            data: error
           }).complete(next);
         })
     })
