@@ -32,15 +32,16 @@ var worker = new SqlMqWorker({
           return payment.updateAttributes({
             status: 'successful',
             uid: coinbasePayment.id
-          }).then(next)
+          }).complete(next);
         })
         .error(function(error) {
+          console.log('ERROR', error);
           var data = payment.data || {};
           data.error = error;
           payment.updateAttributes({
             status: 'failed',
             data: data
-          })
+          }).complete(next);
         })
     })
   }
