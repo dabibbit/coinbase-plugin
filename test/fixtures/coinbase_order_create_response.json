@@ -1,0 +1,21 @@
+{ order: 
+   id: '0ODVUUAB',
+   created_at: '2014-10-03T21:44:12-07:00',
+   status: 'completed',
+   event: { type: 'completed' },
+   total_btc: { cents: 1370500, currency_iso: 'BTC' },
+   total_native: { cents: 500, currency_iso: 'USD' },
+   total_payout: { cents: 0, currency_iso: 'USD' },
+   custom: 'Order123',
+   receive_address: '13Lwwis9jY1kGQfZQjgNuFk5LBVt8MXkpF',
+   button: 
+    { type: 'buy_now',
+      subscription: false,
+      repeat: null,
+      name: 'test gatewayd',
+      description: null,
+      id: 'b6b07ce5fc09aed73eebabf729db3463' },
+   transaction: 
+    { id: '542f7b2fb14d9f8e3d002315',
+      hash: 'bb695fd2f618b47569e6bb88638bd3f95e3ba7e4810b566c3748ab7ee023a153',
+      confirmations: 0 } } }
