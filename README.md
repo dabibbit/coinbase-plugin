@@ -2,6 +2,12 @@ coinbase-plugin
 
 Bridge from Ripple to email or bitcoin addresses via Coinbase.
 
+### Installation
+
+In your gatewayd node.js project
+
+  npm install --save gatewayd-coinbase
+
 ### USAGE
 
 In Gatewaydfile:
@@ -18,75 +24,45 @@ In Gatewaydfile:
       // gatewayd.server.use('/coinbase', plugin.router);
     }
 
-## coinbase-node
+#### Send Payments with Coinbase
 
-### A node.js client for interacting with the Coinbase REST API.
+The process `send-payments-with-coinbase.js`, reads payments from the
+gatewayd external transactions queue destined for coinbase
+account email addresses or bitcoin addresses and sends them
+signed using the Coinbase api, key and secret.
 
-- send bitcoins from a Coinbase acccount
-- generate Bitcoin invoices with callback urls
+To run the `send-with-coinbase.js` process alone execute:
 
-Currently only supports API Key based access.
+    export GATEWAYD_PATH=/path/to/gatewayd/
+    node processes/send-payments-with-coinbase.js
 
-## Installation
+Beind the scenes `send-payments-with-coinbase.js` polls the database
+continually for transactions with external accounts where the `status`
+is `outgoing`
 
-    npm install coinbase-node
 
-## Example
+#### Receive Payments via Coinbase
 
-		var Coinbase = require("coinbase-node");
-				
-		var client = new Coinbase.Client({ 
-			api_key: process.env.COINBASE_API_KEY
-		}); 
+Payments made via Coinbase to a Ripple destination can be performed
+by registering an at Coinbase. Using the `button` and `order` resources
+with the Coinbase REST api Gatewayd can programatically create
+payment invoice pages with urls for clients to send bitcoin.
 
-		function callback(err, resp, body){
-			console.log(body);
-		}
-		
-		client.send_money('1G2UULb1M3hbB2b4Kt5v3E1R6Pc2XNW756','0.01', callack);
+    https://coinbase.com/api/doc/1.0/buttons/create.html
 
-The above code will send 0.01 bitcoins to the bitcoin address listed.
+    POST https://api.coinbase.com/v1/buttons
 
-## New Interface
+Gatewayd can map a button to a ripple address destination, creating
+a permanant bridge.
 
-    coinbase = new CoinbaseClient({
-      apiKey: process.env.COINBASE_API_KEY,
-      secret: process.env.COINBASE_SECRET
-    });
+Once a bridge is established payments can be made by creating orders
+for a given coinbase button:
 
-### Send Money
+    https://coinbase.com/api/doc/1.0/buttons/create_order.html
 
-    coinbase.sendMoney({
-      to: 'me@stevenzeiler.com',
-      amount: 1.5,
-      note: 'Payment for Services'
-    })
-    .then(function(transaction) {
-      // do something with new transaction
-    })
-    .error(function(error) {
-      // handle error
-    });
+    POST /api/v1/buttons/:code/create_order
 
-### Get Transaction
-    
-    coinbase.getTransaction({
-      id: 12345
-    })
-    .then(function(transaction) {
-      // do something with new transaction
-    })
-    .error(function(error) {
-      // handle error
-    });
-
-### List Transactions
-
-    coinbase.listTransactions()
-    .then(function(transaction) {
-      // do something with new transactions
-    })
-    .error(function(error) {
-      // handle error
-    });
+When the order is fulfilled by receiving the requisite bitcoin amount
+a POST callback will be sent to the gatewayd server from Coinbase,
+ultimately triggering the corresponding ripple payment.
 
