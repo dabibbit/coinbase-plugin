@@ -1,10 +1,14 @@
 const express = require('express');
-const QuotesController = require(__dirname+'/lib/controllers/quotes_controller');
+const QuotesController = require(__dirname+'/lib/controllers/quotes_controller.js');
+const PaymentsController = require(__dirname+'/lib/controllers/payments_controller.js');
 
 function CoinbasePlugin(options) {
   var router = new express.Router();
 
   var quotesController = new QuotesController ({
+    gatewayd: options.gatewayd
+  });
+  var PaymentsController = new PaymentsController ({
     gatewayd: options.gatewayd
   });
 
@@ -19,6 +23,7 @@ function CoinbasePlugin(options) {
     })
   });
   router.get('/v1/payments/quotes', quotesController.test.bind(quotesController));
+  router.post('/bridge/payments', paymentsController.create.bind(paymentsController));
 
   this.router = router;
   this.processes = {
